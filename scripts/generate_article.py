@@ -12,7 +12,8 @@ import random
 from datetime import datetime
 from pathlib import Path
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 # --- 設定 ---
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
@@ -20,8 +21,11 @@ AMAZON_TAG     = os.environ.get("AMAZON_ASSOCIATE_TAG", "xxxxxxxx-22")
 ARTICLES_PER_RUN = 1
 USED_FILE = Path("scripts/used_keywords.json")
 
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+# v1（安定版）APIを使用 → gemini-1.5-flash が利用可能
+client = genai.Client(
+    api_key=GEMINI_API_KEY,
+    http_options={"api_version": "v1"}
+)
 
 # --- キーワード戦略 ---
 PRODUCTS = [
@@ -117,9 +121,10 @@ Hugo Markdownの本文のみ。front matterは含めないこと。
 """
     for attempt in range(3):
         try:
-            res = model.generate_content(
-                prompt,
-                generation_config=genai.GenerationConfig(temperature=0.7)
+            res = client.models.generate_content(
+                model="gemini-1.5-flash",
+                contents=prompt,
+                config=types.GenerateContentConfig(temperature=0.7)
             )
             return res.text.strip()
         except Exception as e:
