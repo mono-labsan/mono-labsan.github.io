@@ -47,15 +47,47 @@ PRODUCTS = [
 ]
 
 TEMPLATES = [
-    "{product} おすすめ ランキング TOP5【2025年最新】",
-    "{product} 比較【2025年版】選び方と人気モデルを徹底解説",
+    "{product} おすすめ ランキング TOP5【2026年最新】",
+    "{product} 比較【2026年版】選び方と人気モデルを徹底解説",
     "コスパ最強 {product} おすすめ 厳選5選",
     "{product} 選び方 失敗しないポイントと人気商品",
-    "1万円以下 {product} おすすめ 2025年版",
+    "1万円以下 {product} おすすめ 2026年版",
     "テレワーク向け {product} おすすめランキング",
     "{product} 初心者向け おすすめ 完全ガイド",
     "{product} 人気モデル徹底比較【専門家が解説】",
 ]
+
+# カテゴリ別カバー画像（Unsplash）
+COVER_IMAGES = {
+    "イヤホン": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&q=80",
+    "キーボード": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&q=80",
+    "マウス": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=800&q=80",
+    "モバイルバッテリー": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&q=80",
+    "ハブ": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    "Webカメラ": "https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=800&q=80",
+    "SSD": "https://images.unsplash.com/photo-1597740985671-2a8a3b80502e?w=800&q=80",
+    "HDD": "https://images.unsplash.com/photo-1597740985671-2a8a3b80502e?w=800&q=80",
+    "スタンド": "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&q=80",
+    "モニター": "https://images.unsplash.com/photo-1547082299-de196ea013d6?w=800&q=80",
+    "充電": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&q=80",
+    "スマートウォッチ": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80",
+    "ヘッドセット": "https://images.unsplash.com/photo-1599669454699-248893623440?w=800&q=80",
+    "スピーカー": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800&q=80",
+    "ドライブレコーダー": "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80",
+    "掃除機": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    "スマートホーム": "https://images.unsplash.com/photo-1558002038-1055907df827?w=800&q=80",
+    "プロジェクター": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800&q=80",
+    "Kindle": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80",
+    "チェア": "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=800&q=80",
+    "デスク": "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&q=80",
+    "default": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+}
+
+def get_cover_image(product: str) -> str:
+    for key, url in COVER_IMAGES.items():
+        if key in product:
+            return url
+    return COVER_IMAGES["default"]
 
 def load_used():
     if USED_FILE.exists():
@@ -135,21 +167,25 @@ Hugo Markdownの本文のみ。front matterは含めないこと。
 
 def build_frontmatter(keyword: str, product: str) -> str:
     now = datetime.now()
-    # front matter 用に " をエスケープ
     safe_kw = keyword.replace('"', '\\"')
     desc = f"{keyword}を徹底比較。おすすめモデルをランキング形式で紹介します。"
+    cover_url = get_cover_image(product)
     return f"""---
 title: "{safe_kw}"
 date: {now.strftime('%Y-%m-%dT%H:%M:%S+09:00')}
 draft: false
 description: "{desc}"
 categories: ["{product}"]
-tags: ["{product}", "比較", "おすすめ", "ランキング", "2025"]
+tags: ["{product}", "比較", "おすすめ", "ランキング", "2026"]
+cover:
+  image: "{cover_url}"
+  alt: "{product}のおすすめ比較"
+  relative: false
 ---
 
 {{{{< rawhtml >}}}}
-<div style="background:#fff8dc;border-left:4px solid #f0ad4e;padding:10px 14px;margin-bottom:24px;font-size:0.9em;">
-<strong>【広告・アフィリエイト開示】</strong>本記事にはAmazonアソシエイトのリンクが含まれます。リンク経由での購入時に手数料を受け取る場合がありますが、紹介内容の公平性に一切影響しません。
+<div class="affiliate-disclosure">
+<strong>【広告・PR】</strong>本記事にはAmazonアソシエイトのリンクが含まれます。リンク経由での購入時に手数料を受け取る場合がありますが、紹介内容の公平性に一切影響しません。
 </div>
 {{{{< /rawhtml >}}}}
 
