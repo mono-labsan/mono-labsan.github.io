@@ -118,7 +118,7 @@ Hugo Markdownの本文のみ。front matterは含めないこと。
     for attempt in range(3):
         try:
             res = client.models.generate_content(
-                model="gemini-1.5-flash-8b",
+                model="gemini-1.5-flash",
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     temperature=0.7,
