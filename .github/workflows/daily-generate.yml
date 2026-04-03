@@ -1,21 +1,33 @@
-name: 毎日記事自動生成
+name: 毎日記事自動生成＆デプロイ
 
 on:
   schedule:
     # 毎朝9:00 JST (= UTC 00:00) に実行
     - cron: '0 0 * * *'
-  workflow_dispatch:  # 手動実行も可能
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  generate:
+  generate-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: リポジトリをチェックアウト
         uses: actions/checkout@v4
         with:
+          submodules: recursive
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Python セットアップ
@@ -34,10 +46,28 @@ jobs:
           AMAZON_ASSOCIATE_TAG: ${{ secrets.AMAZON_ASSOCIATE_TAG }}
         run: python scripts/generate_article.py
 
-      - name: 生成記事をコミット & プッシュ
+      - name: 生成記事をコミット
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "✨ 自動生成記事を追加 [${{ github.run_number }}]"
           commit_user_name: "ガジェット比較ナビBot"
           commit_user_email: "bot@example.com"
           file_pattern: "content/posts/*.md scripts/used_keywords.json"
+
+      - name: Hugo セットアップ
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true
+
+      - name: サイトビルド
+        run: hugo --minify
+
+      - name: Pages アーティファクトをアップロード
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+      - name: GitHub Pages にデプロイ
+        id: deployment
+        uses: actions/deploy-pages@v4
