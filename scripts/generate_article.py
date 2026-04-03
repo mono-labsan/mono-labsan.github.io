@@ -12,16 +12,15 @@ import random
 from datetime import datetime
 from pathlib import Path
 
-from google import genai
-from google.genai import types
+from groq import Groq
 
 # --- 設定 ---
-GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+GROQ_API_KEY   = os.environ["GROQ_API_KEY"]
 AMAZON_TAG     = os.environ.get("AMAZON_ASSOCIATE_TAG", "xxxxxxxx-22")
 ARTICLES_PER_RUN = 1
 USED_FILE = Path("scripts/used_keywords.json")
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+client = Groq(api_key=GROQ_API_KEY)
 
 # --- キーワード戦略 ---
 PRODUCTS = [
@@ -117,15 +116,16 @@ Hugo Markdownの本文のみ。front matterは含めないこと。
 """
     for attempt in range(3):
         try:
-            res = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=prompt,
-                config=types.GenerateContentConfig(temperature=0.7)
+            res = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7,
+                max_tokens=4096,
             )
-            return res.text.strip()
+            return res.choices[0].message.content.strip()
         except Exception as e:
             print(f"  エラー全文: {e}")
-            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+            if "429" in str(e) or "rate_limit" in str(e).lower():
                 wait = 30 * (2 ** attempt)
                 print(f"  レート制限。{wait}秒待機...")
                 time.sleep(wait)
