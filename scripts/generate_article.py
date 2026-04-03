@@ -18,7 +18,7 @@ from google.genai import types
 # --- 設定 ---
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 AMAZON_TAG     = os.environ.get("AMAZON_ASSOCIATE_TAG", "xxxxxxxx-22")
-ARTICLES_PER_RUN = 3
+ARTICLES_PER_RUN = 1
 USED_FILE = Path("scripts/used_keywords.json")
 
 client = genai.Client(api_key=GEMINI_API_KEY)
@@ -88,7 +88,6 @@ def amazon_search_url(product: str) -> str:
     return f"https://www.amazon.co.jp/s?k={q}&tag={AMAZON_TAG}"
 
 def generate_content(keyword: str, product: str) -> str | None:
-    search_tool = types.Tool(google_search=types.GoogleSearch())
     prompt = f"""
 あなたはガジェット比較サイトの専門ライターです。
 以下のキーワードで日本語のSEO記事を書いてください。
@@ -119,17 +118,16 @@ Hugo Markdownの本文のみ。front matterは含めないこと。
     for attempt in range(3):
         try:
             res = client.models.generate_content(
-                model="gemini-2.0-flash",
+                model="gemini-2.0-flash-lite",
                 contents=prompt,
                 config=types.GenerateContentConfig(
-                    tools=[search_tool],
                     temperature=0.7,
                 )
             )
             return res.text.strip()
         except Exception as e:
             if "429" in str(e):
-                wait = 10 * (2 ** attempt)
+                wait = 30 * (2 ** attempt)
                 print(f"  レート制限。{wait}秒待機...")
                 time.sleep(wait)
             else:
