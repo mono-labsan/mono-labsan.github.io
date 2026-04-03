@@ -21,11 +21,7 @@ AMAZON_TAG     = os.environ.get("AMAZON_ASSOCIATE_TAG", "xxxxxxxx-22")
 ARTICLES_PER_RUN = 1
 USED_FILE = Path("scripts/used_keywords.json")
 
-# v1（安定版）APIを使用 → gemini-1.5-flash が利用可能
-client = genai.Client(
-    api_key=GEMINI_API_KEY,
-    http_options={"api_version": "v1"}
-)
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 # --- キーワード戦略 ---
 PRODUCTS = [
@@ -122,7 +118,7 @@ Hugo Markdownの本文のみ。front matterは含めないこと。
     for attempt in range(3):
         try:
             res = client.models.generate_content(
-                model="gemini-1.5-flash",
+                model="gemini-2.0-flash",
                 contents=prompt,
                 config=types.GenerateContentConfig(temperature=0.7)
             )
