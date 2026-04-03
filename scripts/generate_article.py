@@ -118,7 +118,7 @@ Hugo Markdownの本文のみ。front matterは含めないこと。
     for attempt in range(3):
         try:
             res = client.models.generate_content(
-                model="gemini-2.0-flash-lite",
+                model="gemini-1.5-flash-8b",
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     temperature=0.7,
@@ -126,12 +126,12 @@ Hugo Markdownの本文のみ。front matterは含めないこと。
             )
             return res.text.strip()
         except Exception as e:
-            if "429" in str(e):
+            print(f"  エラー全文: {e}")
+            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
                 wait = 30 * (2 ** attempt)
                 print(f"  レート制限。{wait}秒待機...")
                 time.sleep(wait)
             else:
-                print(f"  Gemini エラー: {e}")
                 return None
     return None
 
