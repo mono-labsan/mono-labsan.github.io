@@ -1,0 +1,55 @@
+baseURL = "https://cocone2828-byte.github.io/"
+languageCode = "ja"
+title = "ガジェット比較ナビ"
+theme = "PaperMod"
+enableRobotsTXT = true
+buildDrafts = false
+buildFuture = false
+paginate = 15
+
+[params]
+  env         = "production"
+  title       = "ガジェット比較ナビ"
+  description = "最新ガジェット・デジタル機器の比較・レビュー情報サイト。毎日更新中。"
+  keywords    = ["ガジェット", "比較", "レビュー", "おすすめ", "ランキング"]
+  author      = "ガジェット比較ナビ編集部"
+
+  ShowReadingTime    = true
+  ShowShareButtons   = false
+  ShowPostNavLinks   = true
+  ShowBreadCrumbs    = true
+  ShowCodeCopyButtons = false
+  ShowToc            = true
+  TocOpen            = false
+
+  [params.homeInfoParams]
+    Title   = "ガジェット比較ナビ"
+    Content = "最新ガジェット・デジタル周辺機器の比較・レビューを毎日更新。失敗しない買い物をサポートします。"
+
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name       = "ホーム"
+    url        = "/"
+    weight     = 10
+  [[menu.main]]
+    identifier = "categories"
+    name       = "カテゴリ"
+    url        = "/categories/"
+    weight     = 20
+  [[menu.main]]
+    identifier = "tags"
+    name       = "タグ"
+    url        = "/tags/"
+    weight     = 30
+
+[taxonomies]
+  category = "categories"
+  tag      = "tags"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[minify]
+  disableXML  = true
+  minifyOutput = true

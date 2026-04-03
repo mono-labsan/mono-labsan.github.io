@@ -1,0 +1,43 @@
+name: 毎日記事自動生成
+
+on:
+  schedule:
+    # 毎朝9:00 JST (= UTC 00:00) に実行
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Python セットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: scripts/requirements.txt
+
+      - name: 依存関係インストール
+        run: pip install -r scripts/requirements.txt
+
+      - name: 記事を生成
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AMAZON_ASSOCIATE_TAG: ${{ secrets.AMAZON_ASSOCIATE_TAG }}
+        run: python scripts/generate_article.py
+
+      - name: 生成記事をコミット & プッシュ
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "✨ 自動生成記事を追加 [${{ github.run_number }}]"
+          commit_user_name: "ガジェット比較ナビBot"
+          commit_user_email: "bot@example.com"
+          file_pattern: "content/posts/*.md scripts/used_keywords.json"
