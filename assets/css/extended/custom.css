@@ -1,7 +1,164 @@
 /* ========================================
-   ガジェット比較ナビ — デザインシステム v2
+   ガジェット比較ナビ — デザインシステム v3
    テーマ: 精密計測パネル × ネイビーダーク
    ======================================== */
+
+/* ── Custom scrollbar ── */
+::-webkit-scrollbar { width: 7px; }
+::-webkit-scrollbar-track { background: var(--c-bg, #0b0b14); }
+::-webkit-scrollbar-thumb { background: #2a2a42; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #00c4b4; }
+
+/* ── Reading progress bar ── */
+.reading-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: linear-gradient(90deg, #00c4b4, #a855f7);
+  z-index: 9999;
+  transition: width 0.08s linear;
+  box-shadow: 0 0 8px rgba(0,196,180,0.6);
+}
+
+/* ── Back to top button ── */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 20px;
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, #00c4b4, #009e90);
+  color: #0b0b14; border: none; border-radius: 50%;
+  font-size: 1.1rem; font-weight: 700;
+  cursor: pointer; z-index: 200;
+  opacity: 0; transform: translateY(14px) scale(0.85);
+  transition: opacity 0.3s, transform 0.3s;
+  box-shadow: 0 4px 20px rgba(0,196,180,0.45);
+  display: flex; align-items: center; justify-content: center;
+}
+.back-to-top.visible { opacity: 1; transform: translateY(0) scale(1); }
+.back-to-top:hover { filter: brightness(1.15); }
+
+/* ── Scroll fade-in ── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-in.is-visible { opacity: 1; transform: translateY(0); }
+
+/* ── NEW badge ── */
+.new-badge {
+  position: absolute; top: 12px; left: 12px; z-index: 10;
+  background: linear-gradient(135deg, #00c4b4, #a855f7);
+  color: #fff; font-size: 0.65rem; font-weight: 800;
+  letter-spacing: 0.1em; padding: 3px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,196,180,0.5);
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Featured first card ── */
+@media (min-width: 700px) {
+  .posts-listing article.post-entry:first-child {
+    grid-column: 1 / -1 !important;
+    flex-direction: row !important;
+    max-height: 280px;
+  }
+  .posts-listing article.post-entry:first-child .entry-cover {
+    width: 44% !important;
+    aspect-ratio: auto !important;
+    flex-shrink: 0 !important;
+    min-height: 100%;
+  }
+  .posts-listing article.post-entry:first-child .entry-header {
+    padding: 24px 24px 12px !important;
+  }
+  .posts-listing article.post-entry:first-child .entry-header h2 {
+    font-size: 1.2rem !important;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .posts-listing article.post-entry:first-child .entry-content {
+    padding: 0 24px 12px !important;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .posts-listing article.post-entry:first-child::before {
+    content: '✦ 最新記事';
+    position: absolute;
+    top: 12px; right: 14px;
+    font-size: 0.68rem; font-weight: 700;
+    color: #00c4b4; letter-spacing: 0.08em;
+    font-family: 'Inter', sans-serif;
+  }
+  .posts-listing article.post-entry:first-child {
+    position: relative;
+  }
+}
+
+/* ── Animated hero underline ── */
+.home-info h1 span {
+  display: inline-block;
+  background: linear-gradient(90deg, #00c4b4, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Link hover underline animation ── */
+.post-content a:not([href*="amazon.co.jp"]) {
+  color: #00c4b4 !important;
+  text-decoration: none !important;
+  background-image: linear-gradient(90deg, #00c4b4, #a855f7);
+  background-size: 0% 1.5px;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  transition: background-size 0.3s ease !important;
+  padding-bottom: 1px;
+}
+.post-content a:not([href*="amazon.co.jp"]):hover {
+  background-size: 100% 1.5px !important;
+}
+
+/* ── Better list bullets ── */
+.post-content ul li::marker { color: #00c4b4 !important; }
+.post-content ol li::marker { color: #a855f7 !important; font-weight: 700 !important; }
+
+/* ── Image captions ── */
+.post-content img {
+  border-radius: 10px !important;
+  border: 1px solid #2a2a42 !important;
+  max-width: 100% !important;
+}
+.post-content figure figcaption {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #606880;
+  margin-top: 8px;
+}
+
+/* ── Horizontal rule ── */
+.post-content hr {
+  border: none !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, #2a2a42 30%, #2a2a42 70%, transparent) !important;
+  margin: 40px 0 !important;
+}
+
+/* ── Strong emphasis ── */
+.post-content strong { color: #e8eaf0 !important; font-weight: 700 !important; }
+
+/* ── Tip/Note callout (blockquote) ── */
+.post-content blockquote::before {
+  content: '💡 ポイント';
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #a855f7;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  font-family: 'Inter', sans-serif;
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;600;700&display=swap');
 
