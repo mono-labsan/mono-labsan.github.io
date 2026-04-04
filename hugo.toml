@@ -1,6 +1,6 @@
 baseURL = "https://mono-labsan.github.io/"
 languageCode = "ja"
-title = "ガジェット比較ナビ"
+title = "モノラボ"
 theme = "PaperMod"
 enableRobotsTXT = true
 buildDrafts = false
@@ -9,8 +9,8 @@ paginate = 15
 
 [params]
   env         = "production"
-  title       = "ガジェット比較ナビ"
-  description = "最新ガジェット・デジタル機器の比較・レビュー情報サイト。毎日更新中。"
+  title       = "モノラボ"
+  description = "ガジェット・デジタル機器を本音でレビュー。モノラボが実際に試して比較します。"
   keywords    = ["ガジェット", "比較", "レビュー", "おすすめ", "ランキング"]
   author      = "ガジェット比較ナビ編集部"
 
@@ -24,8 +24,8 @@ paginate = 15
   ShowFullTextinRSS  = true
 
   [params.homeInfoParams]
-    Title   = "🔬 ガジェット比較ナビ"
-    Content = "最新ガジェット・デジタル周辺機器の比較・レビューを毎日更新。失敗しない買い物をサポートします。"
+    Title   = "🔬 モノラボ"
+    Content = "ガジェット・デジタル機器を本音でレビュー。実際に試して比較した情報を毎日更新中。"
 
   [params.cover]
     hidden          = false
