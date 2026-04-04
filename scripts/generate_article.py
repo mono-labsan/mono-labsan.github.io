@@ -9,7 +9,7 @@ import sys
 import json
 import time
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from groq import Groq
@@ -169,7 +169,7 @@ Hugo Markdownの本文のみ。front matterは含めないこと。
     return None
 
 def build_frontmatter(keyword: str, product: str) -> str:
-    now = datetime.now()
+    now = datetime.now() - timedelta(days=1)  # buildFuture=false対策：必ず過去日付にする
     safe_kw = keyword.replace('"', '\\"')
     desc = f"{keyword}を徹底比較。おすすめモデルをランキング形式で紹介します。"
     cover_url = get_cover_image(product)
