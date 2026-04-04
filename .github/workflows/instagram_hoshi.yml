@@ -1,4 +1,4 @@
-name: Hoshi 毎日Instagram投稿
+name: Hoshi 毎日Instagram・TikTok投稿
 
 on:
   schedule:
@@ -26,7 +26,7 @@ jobs:
       - name: Pythonパッケージをインストール
         run: pip install fal-client cloudinary requests
 
-      - name: ほし動画を生成してInstagramに投稿
+      - name: ほし動画を生成してInstagram・TikTokに投稿
         env:
           FAL_KEY: ${{ secrets.FAL_KEY }}
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
@@ -34,6 +34,9 @@ jobs:
           CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
           INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
         run: python scripts/instagram_hoshi.py
 
       - name: 使用済みシーンをコミット

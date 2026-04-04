@@ -1,5 +1,5 @@
 """
-ほし (Hoshi) - 星の妖精キャラクターの動画を毎日自動生成してInstagramに投稿するスクリプト。
+ほし (Hoshi) - 星の妖精キャラクターの動画を毎日自動生成してInstagram・TikTokに投稿するスクリプト。
 GitHub Actions から実行される。
 
 必要なGitHub Secrets:
@@ -9,6 +9,9 @@ GitHub Actions から実行される。
   CLOUDINARY_API_SECRET    - Cloudinary APIシークレット
   INSTAGRAM_ACCESS_TOKEN   - Instagram Graph APIのアクセストークン（長期）
   INSTAGRAM_ACCOUNT_ID     - InstagramビジネスアカウントのユーザーID
+  TIKTOK_CLIENT_KEY        - TikTok開発者アプリのClient Key
+  TIKTOK_CLIENT_SECRET     - TikTok開発者アプリのClient Secret
+  TIKTOK_REFRESH_TOKEN     - TikTok OAuthリフレッシュトークン（tiktok_auth.pyで取得）
 """
 
 import os
@@ -237,6 +240,7 @@ def upload_to_cloudinary(video_bytes: bytes) -> str:
 # ステップ5: Instagram Reelsに投稿
 # ---------------------------------------------------------------------------
 
+
 def post_to_instagram_reels(video_url: str, caption: str) -> str:
     account_id = os.environ["INSTAGRAM_ACCOUNT_ID"]
     access_token = os.environ["INSTAGRAM_ACCESS_TOKEN"]
@@ -290,6 +294,75 @@ def post_to_instagram_reels(video_url: str, caption: str) -> str:
     return post_id
 
 
+
+# ---------------------------------------------------------------------------
+# ステップ6: TikTokに投稿
+# ---------------------------------------------------------------------------
+
+def refresh_tiktok_token() -> str:
+    """リフレッシュトークンを使ってアクセストークンを自動更新"""
+    res = requests.post(
+        "https://open.tiktokapis.com/v2/oauth/token/",
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        data={
+            "client_key": os.environ["TIKTOK_CLIENT_KEY"],
+            "client_secret": os.environ["TIKTOK_CLIENT_SECRET"],
+            "grant_type": "refresh_token",
+            "refresh_token": os.environ["TIKTOK_REFRESH_TOKEN"],
+        },
+        timeout=30,
+    )
+    res.raise_for_status()
+    data = res.json()
+    if "access_token" not in data:
+        raise RuntimeError(f"TikTokトークン更新失敗: {data}")
+    return data["access_token"]
+
+
+def post_to_tiktok(video_url: str, caption: str) -> str:
+    print("  TikTokアクセストークンを更新中...")
+    access_token = refresh_tiktok_token()
+
+    # タイトルは1行目・150文字以内
+    title = caption.split("\n")[0][:150]
+
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json; charset=UTF-8",
+    }
+    payload = {
+        "post_info": {
+            "title": title,
+            "privacy_level": "PUBLIC_TO_EVERYONE",
+            "disable_duet": False,
+            "disable_comment": False,
+            "disable_stitch": False,
+            "video_cover_timestamp_ms": 1000,
+        },
+        "source_info": {
+            "source": "PULL_FROM_URL",
+            "video_url": video_url,
+        },
+        "post_mode": "DIRECT_POST",
+        "media_type": "VIDEO",
+    }
+
+    res = requests.post(
+        "https://open.tiktokapis.com/v2/post/publish/video/init/",
+        headers=headers,
+        json=payload,
+        timeout=30,
+    )
+    res.raise_for_status()
+    data = res.json()
+
+    err = data.get("error", {})
+    if err.get("code", "ok") != "ok":
+        raise RuntimeError(f"TikTok投稿エラー: {data}")
+
+    return data["data"]["publish_id"]
+
+
 # ---------------------------------------------------------------------------
 # メイン
 # ---------------------------------------------------------------------------
@@ -330,15 +403,39 @@ def main():
     video_url = upload_to_cloudinary(processed)
     print(f"  ✅ アップロード完了: {video_url}")
 
-    print("\n[5/5] Instagramに投稿中...")
-    post_id = post_to_instagram_reels(video_url, caption)
-    print(f"  ✅ 投稿完了! 投稿ID: {post_id}")
+    results = []
+
+    # Instagram
+    if os.environ.get("INSTAGRAM_ACCESS_TOKEN"):
+        print("\n[5/6] Instagramに投稿中...")
+        try:
+            ig_id = post_to_instagram_reels(video_url, caption)
+            print(f"  ✅ Instagram投稿完了! 投稿ID: {ig_id}")
+            results.append(f"Instagram: {ig_id}")
+        except Exception as e:
+            print(f"  ⚠️ Instagram投稿失敗（スキップ）: {e}")
+    else:
+        print("\n[5/6] INSTAGRAM_ACCESS_TOKEN未設定 → スキップ")
+
+    # TikTok
+    if os.environ.get("TIKTOK_CLIENT_KEY"):
+        print("\n[6/6] TikTokに投稿中...")
+        try:
+            tt_id = post_to_tiktok(video_url, caption)
+            print(f"  ✅ TikTok投稿完了! publish_id: {tt_id}")
+            results.append(f"TikTok: {tt_id}")
+        except Exception as e:
+            print(f"  ⚠️ TikTok投稿失敗（スキップ）: {e}")
+    else:
+        print("\n[6/6] TIKTOK_CLIENT_KEY未設定 → スキップ")
 
     # 使用済みに追加
     used.add(idx)
     used_file.write_text(json.dumps(sorted(used), ensure_ascii=False, indent=2), encoding="utf-8")
 
     print(f"\n🎉 完了！「{caption.split(chr(10))[0]}」を投稿しました")
+    for r in results:
+        print(f"   {r}")
 
 
 if __name__ == "__main__":
