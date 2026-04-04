@@ -1,5 +1,10 @@
 {{- define "main" }}
-{{- $postPages := .Site.RegularPages.ByDate.Reverse }}
+{{- $postPages := slice }}
+{{- range .Site.RegularPages.ByDate.Reverse }}
+  {{- if eq .Section "posts" }}
+    {{- $postPages = $postPages | append . }}
+  {{- end }}
+{{- end }}
 {{- $featured := index $postPages 0 }}
 {{- $rest := after 1 $postPages }}
 
