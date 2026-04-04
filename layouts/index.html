@@ -1,8 +1,12 @@
 {{- define "main" }}
-{{- $postsSection := .Site.GetPage "section" "posts" }}
-{{- $pages := $postsSection.Pages.ByDate.Reverse }}
-{{- $featured := index $pages 0 }}
-{{- $rest := after 1 $pages }}
+{{- $postPages := slice }}
+{{- range .Site.RegularPages.ByDate.Reverse }}
+  {{- if eq .Section "posts" }}
+    {{- $postPages = $postPages | append . }}
+  {{- end }}
+{{- end }}
+{{- $featured := index $postPages 0 }}
+{{- $rest := after 1 $postPages }}
 
 <!-- ① FEATURED HERO -->
 {{ if $featured }}
@@ -73,7 +77,7 @@
   <section class="gh-posts">
     <div class="gh-section-head">
       <span class="gh-section-tag">📋 レビュー一覧</span>
-      <span class="gh-section-count">全 {{ len $pages }} 件</span>
+      <span class="gh-section-count">全 {{ len $postPages }} 件</span>
     </div>
     <div class="gh-grid">
       {{ range first 12 $rest }}
@@ -101,9 +105,9 @@
       {{ end }}
     </div>
 
-    {{ if gt (len $pages) 13 }}
+    {{ if gt (len $postPages) 13 }}
     <div class="gh-more">
-      <a class="gh-btn-more" href="/posts/">すべてのレビューを見る（{{ len $pages }}件）</a>
+      <a class="gh-btn-more" href="/posts/">すべてのレビューを見る（{{ len $postPages }}件）</a>
     </div>
     {{ end }}
   </section>
