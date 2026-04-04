@@ -1,6 +1,6 @@
 {{- define "main" }}
 {{- $allPages := .Site.RegularPages.ByDate.Reverse }}
-{{- $pages := where $allPages "Section" "posts" }}
+{{- $pages := where $allPages "Params.hiddenInHomeList" "!=" true }}
 {{- $featured := index $pages 0 }}
 {{- $rest := after 1 $pages }}
 
