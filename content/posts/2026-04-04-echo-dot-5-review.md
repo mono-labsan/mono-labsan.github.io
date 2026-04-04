@@ -5,6 +5,8 @@ draft: false
 description: "Amazon Echo Dot 第5世代を実際に使って徹底レビュー。音質・スマートホーム連携・Alexa機能を正直評価。購入すべきか、前世代との違いも解説します。"
 categories: ["スマートスピーカー"]
 tags: ["Echo Dot", "Alexa", "スマートスピーカー", "Amazon", "レビュー", "2026"]
+cover:
+  image: "https://images.unsplash.com/photo-1543512214-318c7553f230?w=800&q=80"
 ---
 
 {{< rawhtml >}}
