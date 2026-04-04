@@ -77,7 +77,7 @@
     <div class="gh-grid">
       {{ range first 12 $rest }}
       {{ $isNew := lt (div (now.Sub .Date).Hours 24.0) 7.0 }}
-      <article class="gh-card fade-in">
+      <article class="gh-card">
         {{ if .Params.cover.image }}
         <div class="gh-card__img">
           <img src="{{ .Params.cover.image }}" alt="{{ .Title }}" loading="lazy">

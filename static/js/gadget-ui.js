@@ -37,7 +37,7 @@
         if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); }
       });
     }, { threshold: 0.07, rootMargin: '0px 0px -32px 0px' });
-    document.querySelectorAll('article.post-entry').forEach((el, i) => {
+    document.querySelectorAll('article.post-entry, article.gh-card').forEach((el, i) => {
       el.classList.add('fade-in');
       el.style.transitionDelay = Math.min(i * 0.06, 0.36) + 's';
       obs.observe(el);
