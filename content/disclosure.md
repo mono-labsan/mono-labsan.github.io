@@ -3,6 +3,7 @@ title: "広告・アフィリエイト開示"
 date: 2026-04-04
 draft: false
 description: "ガジェット比較ナビのアフィリエイト・広告に関する開示ページです。"
+hiddenInHomeList: true
 ---
 
 ## Amazonアソシエイト・プログラムについて

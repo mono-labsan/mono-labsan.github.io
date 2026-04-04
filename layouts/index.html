@@ -1,99 +1,79 @@
 {{- define "main" }}
-{{- $pages := .Site.RegularPages.ByDate.Reverse }}
+{{- $allPages := .Site.RegularPages.ByDate.Reverse }}
+{{- $pages := where $allPages "Section" "posts" }}
 {{- $featured := index $pages 0 }}
 {{- $rest := after 1 $pages }}
 
-<!-- ═══════════════ HERO ═══════════════ -->
-<section class="gh-hero">
-  <div class="gh-hero__grid-bg"></div>
-  <div class="gh-hero__glow"></div>
-  <div class="gh-hero__inner">
-    <p class="gh-hero__eyebrow">🔬 Amazonで買えるガジェットを本音でレビュー</p>
-    <h1 class="gh-hero__title">
-      失敗しない買い物を、<br>
-      <span class="gh-hero__highlight">正直なレビュー</span>で。
-    </h1>
-    <p class="gh-hero__sub">
-      スマートスピーカー・イヤホン・キーボード・スマートホーム…<br>
-      実際に使ったレビューを毎日更新中
-    </p>
-    <div class="gh-hero__stats">
-      <div class="gh-stat">
-        <strong class="gh-stat__num">{{ len .Site.RegularPages }}</strong>
-        <span class="gh-stat__label">件のレビュー</span>
-      </div>
-      <div class="gh-stat__div"></div>
-      <div class="gh-stat">
-        <strong class="gh-stat__num">{{ len .Site.Taxonomies.categories }}</strong>
-        <span class="gh-stat__label">カテゴリ</span>
-      </div>
-      <div class="gh-stat__div"></div>
-      <div class="gh-stat">
-        <strong class="gh-stat__num">毎日</strong>
-        <span class="gh-stat__label">自動更新</span>
-      </div>
+<!-- ① FEATURED HERO -->
+{{ if $featured }}
+<section class="ghf">
+  {{ if $featured.Params.cover.image }}
+  <div class="ghf__bg" style="background-image:url('{{ $featured.Params.cover.image }}')"></div>
+  {{ end }}
+  <div class="ghf__overlay"></div>
+  <div class="ghf__inner">
+    <div class="ghf__eyebrow">
+      <span class="ghf__site-tag">◈ ガジェット比較ナビ</span>
+      <span class="ghf__new-tag">✦ 最新レビュー</span>
     </div>
+    <h1 class="ghf__title">
+      <a href="{{ $featured.Permalink }}">{{ $featured.Title }}</a>
+    </h1>
+    <p class="ghf__desc">{{ $featured.Description }}</p>
+    <div class="ghf__meta">
+      {{ range $featured.Params.categories }}<span class="gh-cat-badge">{{ . }}</span>{{ end }}
+      <span class="ghf__date">📅 {{ $featured.Date.Format "2006年1月2日" }}</span>
+      <span class="ghf__read">⏱ {{ $featured.ReadingTime }}分で読める</span>
+    </div>
+    <a class="ghf__cta" href="{{ $featured.Permalink }}">
+      記事を読む
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
   </div>
 </section>
+{{ end }}
 
-<!-- ═══════════════ CATEGORY BAR ═══════════════ -->
+<!-- ② STATS BAR -->
+<div class="gh-statsbar">
+  <div class="gh-statsbar__inner">
+    <div class="gh-statsbar__item">
+      <strong class="gh-statsbar__num">{{ len .Site.RegularPages }}</strong>
+      <span class="gh-statsbar__label">件のレビュー</span>
+    </div>
+    <div class="gh-statsbar__sep"></div>
+    <div class="gh-statsbar__item">
+      <strong class="gh-statsbar__num">{{ len .Site.Taxonomies.categories }}</strong>
+      <span class="gh-statsbar__label">カテゴリ</span>
+    </div>
+    <div class="gh-statsbar__sep"></div>
+    <div class="gh-statsbar__item">
+      <strong class="gh-statsbar__num">毎日</strong>
+      <span class="gh-statsbar__label">自動更新</span>
+    </div>
+  </div>
+</div>
+
+<!-- ③ CATEGORY FILTER -->
 {{ if .Site.Taxonomies.categories }}
 <nav class="gh-cats">
   <div class="gh-cats__inner">
     <span class="gh-cats__label">カテゴリ</span>
     {{ range $name, $pages := .Site.Taxonomies.categories }}
     <a class="gh-cat-pill" href="/categories/{{ $name | urlize }}/">
-      {{ $name }} <span class="gh-cat-count">{{ len $pages }}</span>
+      {{ $name }}<span class="gh-cat-count">{{ len $pages }}</span>
     </a>
     {{ end }}
   </div>
 </nav>
 {{ end }}
 
+<!-- ④ GRID -->
 <div class="gh-main">
-
-  <!-- ═══════════════ FEATURED POST ═══════════════ -->
-  {{ if $featured }}
-  <section class="gh-featured">
-    <div class="gh-section-head">
-      <span class="gh-section-tag">✦ 最新レビュー</span>
-    </div>
-    <article class="gh-featured__card">
-      {{ if $featured.Params.cover.image }}
-      <div class="gh-featured__img">
-        <img src="{{ $featured.Params.cover.image }}" alt="{{ $featured.Title }}" loading="lazy">
-        <div class="gh-featured__img-overlay"></div>
-      </div>
-      {{ end }}
-      <div class="gh-featured__body">
-        <div class="gh-featured__cats">
-          {{ range $featured.Params.categories }}
-          <span class="gh-cat-badge">{{ . }}</span>
-          {{ end }}
-        </div>
-        <h2 class="gh-featured__title">
-          <a href="{{ $featured.Permalink }}">{{ $featured.Title }}</a>
-        </h2>
-        <p class="gh-featured__desc">{{ $featured.Description }}</p>
-        <div class="gh-featured__meta">
-          <span>📅 {{ $featured.Date.Format "2006年1月2日" }}</span>
-          <span>⏱ {{ $featured.ReadingTime }}分で読める</span>
-        </div>
-        <a class="gh-btn-read" href="{{ $featured.Permalink }}">
-          記事を読む
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-      </div>
-    </article>
-  </section>
-  {{ end }}
-
-  <!-- ═══════════════ POST GRID ═══════════════ -->
   {{ if $rest }}
   <section class="gh-posts">
     <div class="gh-section-head">
-      <span class="gh-section-tag">📋 新着レビュー一覧</span>
-      <span class="gh-section-count">全 {{ len .Site.RegularPages }} 件</span>
+      <span class="gh-section-tag">📋 レビュー一覧</span>
+      <span class="gh-section-count">全 {{ len $pages }} 件</span>
     </div>
     <div class="gh-grid">
       {{ range first 12 $rest }}
@@ -110,9 +90,7 @@
         </div>
         {{ end }}
         <div class="gh-card__body">
-          <h3 class="gh-card__title">
-            <a href="{{ .Permalink }}">{{ .Title }}</a>
-          </h3>
+          <h3 class="gh-card__title"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
           <p class="gh-card__desc">{{ .Description }}</p>
         </div>
         <div class="gh-card__footer">
@@ -123,19 +101,16 @@
       {{ end }}
     </div>
 
-    {{ if gt (len .Site.RegularPages) 13 }}
+    {{ if gt (len $pages) 13 }}
     <div class="gh-more">
-      <a class="gh-btn-more" href="/posts/">すべてのレビューを見る（{{ len .Site.RegularPages }}件）</a>
+      <a class="gh-btn-more" href="/posts/">すべてのレビューを見る（{{ len $pages }}件）</a>
     </div>
     {{ end }}
   </section>
   {{ end }}
 
   {{ if not .Site.RegularPages }}
-  <div class="gh-empty">
-    <p>記事を準備中です。まもなく公開されます。</p>
-  </div>
+  <div class="gh-empty"><p>記事を準備中です。まもなく公開されます。</p></div>
   {{ end }}
-
 </div>
 {{- end }}

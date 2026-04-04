@@ -3,6 +3,7 @@ title: "プライバシーポリシー"
 date: 2026-04-04
 draft: false
 description: "ガジェット比較ナビのプライバシーポリシーページです。"
+hiddenInHomeList: true
 ---
 
 ## 収集する情報
