@@ -17,7 +17,15 @@ cover:
 
 Amazon Echo Dot 第5世代は、2022年に発売されたAlexa搭載のコンパクトスマートスピーカーです。定価5,980円ながら、前世代から音質・機能が大幅に向上し、コスパ最強モデルとして評価が高まっています。
 
-[Amazonで価格を確認する](https://www.amazon.co.jp/s?k=Echo+Dot+第5世代&tag=gillab-22)
+{{< rawhtml >}}
+<div style="text-align:center;margin:16px 0;">
+  <a href="https://www.amazon.co.jp/dp/B09B8SZLLG?tag=gillab-22" target="_blank" rel="noopener">
+    <img src="https://images-fe.ssl-images-amazon.com/images/P/B09B8SZLLG.09._SL250_.jpg" alt="Amazon Echo Dot 第5世代" style="max-width:200px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
+  </a>
+</div>
+{{< /rawhtml >}}
+
+[Amazonで価格を確認する](https://www.amazon.co.jp/dp/B09B8SZLLG?tag=gillab-22)
 
 ## スペック・基本情報
 
