@@ -1,0 +1,82 @@
+{{- define "main" }}
+
+<article class="post-single">
+  <header class="post-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1 class="post-title entry-hint-parent">{{ .Title }}</h1>
+    {{- if .Description }}
+    <div class="post-description">{{ .Description }}</div>
+    {{- end }}
+    {{- if not (.Param "hideMeta") }}
+    <div class="post-meta">
+      {{- partial "post_meta.html" . -}}
+      {{- partial "translation_list.html" . -}}
+      {{- partial "edit_post.html" . -}}
+      {{- partial "post_canonical.html" . -}}
+    </div>
+    {{- end }}
+  </header>
+
+  {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
+  {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
+  {{- if (.Param "ShowToc") }}
+  {{- partial "toc.html" . }}
+  {{- end }}
+
+  {{- if .Content }}
+  <div class="post-content">
+    {{- if not (.Param "disableAnchoredHeadings") }}
+    {{- partial "anchored_headings.html" .Content -}}
+    {{- else }}{{ .Content }}{{ end }}
+  </div>
+  {{- end }}
+
+  <footer class="post-footer">
+    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+    <ul class="post-tags">
+      {{- range ($.GetTerms $tags) }}
+      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- if (.Param "ShowPostNavLinks") }}
+    {{- partial "post_nav_links.html" . }}
+    {{- end }}
+    {{- if (and site.Params.ShowShareButtons (ne .Params.disableShare true)) }}
+    {{- partial "share_icons.html" . -}}
+    {{- end }}
+  </footer>
+</article>
+
+<!-- 関連記事セクション -->
+{{- $related := .Site.RegularPages.Related . | first 4 }}
+{{- if $related }}
+<section class="related-posts">
+  <div class="related-posts__inner">
+    <h2 class="related-posts__title">
+      <span>関連記事</span>
+    </h2>
+    <div class="related-posts__grid">
+      {{- range $related }}
+      <article class="related-card">
+        <a class="related-card__cover-link" href="{{ .Permalink }}" aria-label="{{ .Title | plainify }}"></a>
+        {{- with .Params.cover.image }}
+        <div class="related-card__img">
+          <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy">
+          <div class="related-card__overlay"></div>
+        </div>
+        {{- end }}
+        <div class="related-card__body">
+          <div class="related-card__cats">
+            {{- range .Params.categories }}<span class="related-badge">{{ . }}</span>{{- end }}
+          </div>
+          <h3 class="related-card__title"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+          <span class="related-card__date">{{ .Date.Format "2006年01月02日" }}</span>
+        </div>
+      </article>
+      {{- end }}
+    </div>
+  </div>
+</section>
+{{- end }}
+
+{{- end }}{{/* end main */}}

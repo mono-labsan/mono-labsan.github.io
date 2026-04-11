@@ -1,4 +1,4 @@
-{{/* Preconnect for Google Fonts — must come before @import in CSS */}}
+{{/* Preconnect for Google Fonts */}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;600;700&display=swap">
@@ -33,37 +33,78 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "{{ .Site.Title }}",
-  "url": "{{ .Site.BaseURL }}",
-  "description": "{{ .Site.Params.description }}",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "{{ .Site.BaseURL }}search/?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "{{ .Site.Title }}",
+      "url": "{{ .Site.BaseURL }}",
+      "description": "{{ .Site.Params.description }}",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ .Site.BaseURL }}search/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Organization",
+      "name": "{{ .Site.Title }}",
+      "url": "{{ .Site.BaseURL }}"
+    }
+  ]
 }
 </script>
 {{ else if .IsPage }}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": {{ .Title | jsonify }},
-  "description": {{ with .Description }}{{ . | jsonify }}{{ else }}{{ .Summary | truncate 120 | jsonify }}{{ end }},
-  "datePublished": "{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}",
-  "dateModified": "{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}",
-  "author": {
-    "@type": "Organization",
-    "name": "{{ .Site.Params.author }}"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "{{ .Site.Title }}",
-    "url": "{{ .Site.BaseURL }}"
-  },
-  "url": "{{ .Permalink }}"{{ with .Params.cover.image }},
-  "image": "{{ . | absURL }}"{{ end }}
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": {{ .Title | jsonify }},
+      "description": {{ with .Description }}{{ . | jsonify }}{{ else }}{{ .Summary | truncate 120 | jsonify }}{{ end }},
+      "datePublished": "{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}",
+      "dateModified": "{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}",
+      "author": {
+        "@type": "Organization",
+        "name": "{{ .Site.Params.author }}"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "{{ .Site.Title }}",
+        "url": "{{ .Site.BaseURL }}"
+      },
+      "url": "{{ .Permalink }}"{{ with .Params.cover.image }},
+      "image": {
+        "@type": "ImageObject",
+        "url": "{{ . | absURL }}",
+        "width": 800,
+        "height": 600
+      }{{ end }}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "ホーム",
+          "item": "{{ .Site.BaseURL }}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "レビュー一覧",
+          "item": "{{ .Site.BaseURL }}posts/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ .Title | jsonify }},
+          "item": "{{ .Permalink }}"
+        }
+      ]
+    }
+  ]
 }
 </script>
 {{ end }}

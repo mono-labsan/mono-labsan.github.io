@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mono-labsan.github.io/sitemap.xml
