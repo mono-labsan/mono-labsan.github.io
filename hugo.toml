@@ -6,12 +6,19 @@ enableRobotsTXT = true
 buildDrafts = false
 buildFuture = false
 paginate = 15
+enableEmoji = true
+hasCJKLanguage = true
+
+[sitemap]
+  changefreq = "daily"
+  filename   = "sitemap.xml"
+  priority   = 0.5
 
 [params]
   env         = "production"
   title       = "モノラボ"
-  description = "ガジェット・デジタル機器を本音でレビュー。モノラボが実際に試して比較します。"
-  keywords    = ["ガジェット", "比較", "レビュー", "おすすめ", "ランキング"]
+  description = "ガジェット・デジタル機器を本音でレビュー。モノラボが実際に試した比較情報を毎日更新。イヤホン・スマホ・PCアクセサリーなど幅広くカバー。"
+  keywords    = ["ガジェット", "比較", "レビュー", "おすすめ", "ランキング", "イヤホン", "スマホ", "PCアクセサリー", "デジタル機器"]
   author      = "ガジェット比較ナビ編集部"
 
   ShowReadingTime    = true
@@ -22,6 +29,8 @@ paginate = 15
   ShowToc            = true
   TocOpen            = true
   ShowFullTextinRSS  = true
+  defaultTheme       = "dark"
+  disableThemeToggle = false
 
   [params.homeInfoParams]
     Title   = "🔬 モノラボ"
@@ -32,6 +41,15 @@ paginate = 15
     hiddenInList    = false
     hiddenInSingle  = false
     linkFullImages  = true
+
+  [params.fuseOpts]
+    isCaseSensitive = false
+    shouldSort      = true
+    location        = 0
+    distance        = 1000
+    threshold       = 0.4
+    minMatchCharLength = 2
+    keys            = ["title", "permalink", "summary", "content"]
 
 [menu]
   [[menu.main]]
@@ -49,6 +67,11 @@ paginate = 15
     name       = "タグ"
     url        = "/tags/"
     weight     = 30
+  [[menu.main]]
+    identifier = "search"
+    name       = "🔍"
+    url        = "/search/"
+    weight     = 40
 
 [taxonomies]
   category = "categories"
@@ -58,5 +81,5 @@ paginate = 15
   home = ["HTML", "RSS", "JSON"]
 
 [minify]
-  disableXML  = true
+  disableXML   = true
   minifyOutput = true

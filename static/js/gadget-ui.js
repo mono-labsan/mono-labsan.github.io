@@ -73,6 +73,49 @@
     });
   }
 
+  /* 6. Homepage category filter --------------------------- */
+  function initCategoryFilter() {
+    const pills = document.querySelectorAll('.gh-cat-pill');
+    const cards = document.querySelectorAll('.gh-card');
+    if (!pills.length || !cards.length) return;
+
+    pills.forEach(pill => {
+      pill.addEventListener('click', e => {
+        e.preventDefault();
+        const active = pill.classList.contains('is-active');
+
+        // Reset all
+        pills.forEach(p => p.classList.remove('is-active'));
+        cards.forEach(c => c.classList.remove('is-hidden'));
+
+        if (active) return; // click again to deselect
+
+        // Get category name from pill text (strip count)
+        const cat = pill.textContent.trim().replace(/\d+$/, '').trim();
+        pill.classList.add('is-active');
+
+        cards.forEach(card => {
+          const badges = card.querySelectorAll('.gh-cat-badge');
+          const match = Array.from(badges).some(b => b.textContent.trim() === cat);
+          if (!match) card.classList.add('is-hidden');
+        });
+      });
+    });
+  }
+
+  /* 7. Smooth image load ---------------------------------- */
+  function initImageFade() {
+    document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+      img.style.opacity = '0';
+      img.style.transition = 'opacity 0.4s ease';
+      if (img.complete) {
+        img.style.opacity = '1';
+      } else {
+        img.addEventListener('load', () => { img.style.opacity = '1'; });
+      }
+    });
+  }
+
   /* Init -------------------------------------------------- */
   document.addEventListener('DOMContentLoaded', () => {
     initProgressBar();
@@ -80,5 +123,7 @@
     initFadeIn();
     addNewBadges();
     initButtonFeedback();
+    initCategoryFilter();
+    initImageFade();
   });
 })();
