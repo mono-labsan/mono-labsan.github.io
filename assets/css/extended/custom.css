@@ -894,7 +894,15 @@ article.post-entry:hover .entry-cover img {
   display: flex; flex-direction: column;
   transition: transform 0.25s cubic-bezier(.2,.8,.2,1), border-color 0.25s, box-shadow 0.25s;
   box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  position: relative;
 }
+/* Full-card clickable overlay */
+.pl-card__cover-link {
+  position: absolute; inset: 0; z-index: 1;
+}
+/* Keep text links above the overlay */
+.pl-card__title a,
+.pl-card__link { position: relative; z-index: 2; }
 .pl-card:hover {
   transform: translateY(-5px);
   border-color: var(--c-primary);

@@ -41,19 +41,18 @@
     {{- range $paginator.Pages }}
     {{- $isNew := lt (div (now.Sub .Date).Hours 24.0) 7.0 }}
     <article class="pl-card" data-cats="{{ range .Params.categories }}{{ . }} {{ end }}">
+      <a class="pl-card__cover-link" href="{{ .Permalink }}" aria-label="{{ .Title | plainify }}"></a>
       {{- with .Params.cover.image }}
-      <a class="pl-card__img-link" href="{{ $.Permalink }}">
-        <div class="pl-card__img">
-          <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy">
-          {{- if $isNew }}<span class="pl-new">NEW</span>{{- end }}
-          <div class="pl-card__img-overlay"></div>
-          <div class="pl-card__cats-overlay">
-            {{- range $.Params.categories }}
-            <span class="pl-badge">{{ . }}</span>
-            {{- end }}
-          </div>
+      <div class="pl-card__img">
+        <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy">
+        {{- if $isNew }}<span class="pl-new">NEW</span>{{- end }}
+        <div class="pl-card__img-overlay"></div>
+        <div class="pl-card__cats-overlay">
+          {{- range $.Params.categories }}
+          <span class="pl-badge">{{ . }}</span>
+          {{- end }}
         </div>
-      </a>
+      </div>
       {{- end }}
       <div class="pl-card__body">
         <h2 class="pl-card__title">
