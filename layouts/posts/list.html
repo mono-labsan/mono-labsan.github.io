@@ -1,0 +1,127 @@
+{{- define "main" }}
+{{- $allPages := .Pages.ByDate.Reverse }}
+{{- $paginator := .Paginate $allPages }}
+
+<!-- Page Header -->
+<div class="pl-header">
+  <div class="pl-header__inner">
+    <div class="pl-header__title-row">
+      <div>
+        <h1 class="pl-header__title">すべてのレビュー</h1>
+        <p class="pl-header__sub">全 <strong>{{ len $allPages }}</strong> 件 · 毎日更新中</p>
+      </div>
+      <a href="/search/" class="pl-search-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        キーワードで絞り込む
+      </a>
+    </div>
+
+    <!-- Category filter -->
+    {{- $cats := slice }}
+    {{- range $allPages }}
+      {{- range .Params.categories }}
+        {{- $cats = $cats | append . }}
+      {{- end }}
+    {{- end }}
+    {{- $cats = $cats | uniq | sort }}
+    {{- if $cats }}
+    <div class="pl-cats" id="plCats">
+      <button class="pl-cat-btn is-active" data-cat="all">すべて</button>
+      {{- range $cats }}
+      <button class="pl-cat-btn" data-cat="{{ . }}">{{ . }}</button>
+      {{- end }}
+    </div>
+    {{- end }}
+  </div>
+</div>
+
+<!-- Grid -->
+<div class="pl-wrap">
+  <div class="pl-grid" id="plGrid">
+    {{- range $paginator.Pages }}
+    {{- $isNew := lt (div (now.Sub .Date).Hours 24.0) 7.0 }}
+    <article class="pl-card" data-cats="{{ range .Params.categories }}{{ . }} {{ end }}">
+      {{- with .Params.cover.image }}
+      <a class="pl-card__img-link" href="{{ $.Permalink }}">
+        <div class="pl-card__img">
+          <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy">
+          {{- if $isNew }}<span class="pl-new">NEW</span>{{- end }}
+          <div class="pl-card__img-overlay"></div>
+          <div class="pl-card__cats-overlay">
+            {{- range $.Params.categories }}
+            <span class="pl-badge">{{ . }}</span>
+            {{- end }}
+          </div>
+        </div>
+      </a>
+      {{- end }}
+      <div class="pl-card__body">
+        <h2 class="pl-card__title">
+          <a href="{{ .Permalink }}">{{ .Title }}</a>
+        </h2>
+        {{- with .Description }}
+        <p class="pl-card__desc">{{ . }}</p>
+        {{- end }}
+      </div>
+      <div class="pl-card__footer">
+        <span class="pl-card__date">{{ .Date.Format "2006年01月02日" }}</span>
+        <span class="pl-card__read">⏱ {{ .ReadingTime }}分</span>
+        <a class="pl-card__link" href="{{ .Permalink }}">読む →</a>
+      </div>
+    </article>
+    {{- end }}
+  </div>
+
+  <!-- No results state -->
+  <div class="pl-empty" id="plEmpty" style="display:none;">
+    <p>該当する記事がありません</p>
+  </div>
+
+  <!-- Pagination -->
+  {{- if gt $paginator.TotalPages 1 }}
+  <nav class="pl-pager">
+    {{- if $paginator.HasPrev }}
+    <a class="pl-pager__btn" href="{{ $paginator.Prev.URL | absURL }}">← 新しい記事</a>
+    {{- end }}
+    <div class="pl-pager__nums">
+      {{- range $paginator.Pagers }}
+      {{- if eq . $paginator }}
+      <span class="pl-pager__num is-active">{{ .PageNumber }}</span>
+      {{- else }}
+      <a class="pl-pager__num" href="{{ .URL | absURL }}">{{ .PageNumber }}</a>
+      {{- end }}
+      {{- end }}
+    </div>
+    {{- if $paginator.HasNext }}
+    <a class="pl-pager__btn" href="{{ $paginator.Next.URL | absURL }}">古い記事 →</a>
+    {{- end }}
+  </nav>
+  {{- end }}
+</div>
+
+<script>
+(function () {
+  const btns = document.querySelectorAll('.pl-cat-btn');
+  const cards = document.querySelectorAll('.pl-card');
+  const empty = document.getElementById('plEmpty');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      const cat = btn.dataset.cat;
+      let visible = 0;
+      cards.forEach(card => {
+        if (cat === 'all' || card.dataset.cats.includes(cat)) {
+          card.style.display = '';
+          visible++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      empty.style.display = visible === 0 ? 'block' : 'none';
+    });
+  });
+})();
+</script>
+{{- end }}
